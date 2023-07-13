@@ -410,6 +410,22 @@ export function MultipleContainers({
             (item) => item.id === overId
           );
 
+          const teste = {
+            ...items,
+            [overContainer]: arrayMove(
+              items[overContainer],
+              activeIndex,
+              overIndex
+            ).map((item, index) => ({ ...item, index })),
+          };
+
+          const overItem = teste[overContainer].find((item) => item.id === overId);
+          const activeItem = teste[activeContainer].find((item) => item.id === active.id);
+
+          // realizar o patch AQUI
+
+          console.log({ overItem, activeItem });
+
           if (activeIndex !== overIndex) {
             setItems((items) => {
               return {
