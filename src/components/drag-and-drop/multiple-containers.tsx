@@ -454,6 +454,9 @@ export default function MultipleContainers({
         }
 
         if (overId === TRASH_ID) {
+          await fetch(`/items/${activeId}`, {
+            method: "DELETE",
+          });
           setItems((items) => ({
             ...items,
             [activeContainer]: items[activeContainer].filter(
