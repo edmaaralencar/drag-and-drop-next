@@ -3,8 +3,8 @@ import classNames from "classnames";
 import React, { forwardRef } from "react";
 
 import styles from "./container.module.scss";
-import { Handle } from "./item/handle";
-import { Remove } from "./item/remove";
+import { Handle } from "../item/handle";
+import { Remove } from "../item/remove";
 
 export interface ContainerProps {
   children: React.ReactNode;
@@ -52,7 +52,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
           } as React.CSSProperties
         }
         className={classNames(
-          "flex flex-col overflow-hidden appearance-none outline-none min-w-[250px] m-[10px] rounded-md min-h-[300px] transition-colors border border-black/5 text-md bg-[#f6f6f6]",
+          "flex flex-col overflow-hidden appearance-none outline-none min-w-[300px] m-[10px] rounded-md min-h-[300px] transition-colors border border-black/5 text-md bg-[#f6f6f6]",
           unstyled && "bg-transparent overflow-visible",
           horizontal && styles.horizontal,
           hover && "bg-[rgb(235,235,235,1)]",

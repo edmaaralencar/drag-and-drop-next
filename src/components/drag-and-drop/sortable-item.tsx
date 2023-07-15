@@ -2,7 +2,7 @@
 
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
-import { Item } from "./item";
+import { Item } from "../item";
 import { getColor } from "./utils";
 import { useEffect, useState } from "react";
 

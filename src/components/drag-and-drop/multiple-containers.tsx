@@ -46,7 +46,7 @@ import { coordinateGetter as multipleContainersCoordinateGetter } from "./multip
 import { createRange, getColor } from "./utils";
 import { DroppableContainer, IItem } from "./droppable-container";
 import { SortableItem } from "./sortable-item";
-import { Item } from "./item";
+import { Item } from "../item";
 import { Trash } from "./trash";
 import { Container } from "./container";
 import { useAddTaskModal } from "@/hooks/use-add-task-modal-hook";
@@ -107,7 +107,7 @@ export const TRASH_ID = "void";
 const PLACEHOLDER_ID = "placeholder";
 const empty: IItem[] = [];
 
-export function MultipleContainers({
+export default function MultipleContainers({
   adjustScale = false,
   cancelDrop,
   handle = false,
@@ -277,18 +277,34 @@ export function MultipleContainers({
     });
   }, [items]);
 
-  function handleAddTask(containerId: UniqueIdentifier, taskName: string) {
-    setItems((items) => ({
-      ...items,
-      [containerId]: [
-        ...items[containerId],
-        {
-          id: new Date().toString(),
-          name: taskName,
-          index: items[containerId].length,
-        },
-      ],
-    }));
+  async function handleAddTask(
+    containerId: UniqueIdentifier,
+    taskName: string
+  ) {
+    const response = await fetch("/items", {
+      method: "POST",
+      body: JSON.stringify({
+        name: taskName,
+        index: items[containerId].length,
+        column: containerId,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.item) {
+      setItems((items) => ({
+        ...items,
+        [containerId]: [
+          ...items[containerId],
+          {
+            id: data.item.id,
+            name: data.item.name,
+            index: data.item.index,
+          },
+        ],
+      }));
+    }
   }
 
   return (
@@ -304,7 +320,7 @@ export function MultipleContainers({
         setActiveId(active.id);
         setClonedItems(items);
       }}
-      onDragOver={({ active, over }) => {
+      onDragOver={async ({ active, over }) => {
         const overId = over?.id;
 
         if (overId == null || overId === TRASH_ID || active.id in items) {
@@ -319,6 +335,49 @@ export function MultipleContainers({
         }
 
         if (activeContainer !== overContainer) {
+          const activeItems = items[activeContainer];
+          const overItems = items[overContainer];
+          const overIndex = overItems.findIndex((item) => item.id === overId);
+          const activeIndex = activeItems.findIndex(
+            (item) => item.id === active.id
+          );
+
+          let newIndex: number;
+
+          if (overId in items) {
+            newIndex = overItems.length + 1;
+          } else {
+            const isBelowOverItem =
+              over &&
+              active.rect.current.translated &&
+              active.rect.current.translated.top >
+                over.rect.top + over.rect.height;
+
+            const modifier = isBelowOverItem ? 1 : 0;
+
+            newIndex =
+              overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+          }
+
+          recentlyMovedToNewContainer.current = true;
+
+          const finishedArray = [
+            ...items[overContainer].slice(0, newIndex),
+            items[activeContainer][activeIndex],
+            ...items[overContainer].slice(
+              newIndex,
+              items[overContainer].length
+            ),
+          ].map((item, index) => ({ ...item, index }));
+
+          const newItems = {
+            ...items,
+            [activeContainer]: items[activeContainer]
+              .filter((item) => item.id !== active.id)
+              .map((item, index) => ({ ...item, index })),
+            [overContainer]: finishedArray,
+          };
+
           setItems((items) => {
             const activeItems = items[activeContainer];
             const overItems = items[overContainer];
@@ -357,15 +416,20 @@ export function MultipleContainers({
 
             return {
               ...items,
-              [activeContainer]: items[activeContainer].filter(
-                (item) => item.id !== active.id
-              ),
+              [activeContainer]: items[activeContainer]
+                .filter((item) => item.id !== active.id)
+                .map((item, index) => ({ ...item, index })),
               [overContainer]: finishedArray,
             };
           });
+
+          await fetch("/items", {
+            method: "PATCH",
+            body: JSON.stringify(newItems),
+          });
         }
       }}
-      onDragEnd={({ active, over }) => {
+      onDragEnd={async ({ active, over }) => {
         if (active.id in items && over?.id) {
           setContainers((containers) => {
             const activeIndex = containers.indexOf(active.id);
@@ -410,23 +474,16 @@ export function MultipleContainers({
             (item) => item.id === overId
           );
 
-          const teste = {
-            ...items,
-            [overContainer]: arrayMove(
-              items[overContainer],
-              activeIndex,
-              overIndex
-            ).map((item, index) => ({ ...item, index })),
-          };
-
-          const overItem = teste[overContainer].find((item) => item.id === overId);
-          const activeItem = teste[activeContainer].find((item) => item.id === active.id);
-
-          // realizar o patch AQUI
-
-          console.log({ overItem, activeItem });
-
           if (activeIndex !== overIndex) {
+            const newArray = {
+              ...items,
+              [overContainer]: arrayMove(
+                items[overContainer],
+                activeIndex,
+                overIndex
+              ).map((item, index) => ({ ...item, index })),
+            };
+
             setItems((items) => {
               return {
                 ...items,
@@ -436,6 +493,11 @@ export function MultipleContainers({
                   overIndex
                 ).map((item, index) => ({ ...item, index })),
               };
+            });
+
+            await fetch("/items", {
+              method: "PATCH",
+              body: JSON.stringify(newArray),
             });
           }
         }
@@ -507,7 +569,7 @@ export function MultipleContainers({
               onClick={() => {
                 addColumnModalStore.onOpen(handleAddColumn);
               }}
-              className="py-[18px] min-w-[250px] px-5 flex items-center justify-center cursor-pointer border border-dashed border-black/10 text-black/40 hover:border-b-black/30"
+              className="py-[18px] min-w-[300px] px-5 flex items-center justify-center cursor-pointer border border-dashed border-black/10 text-black/40 hover:border-b-black/30"
             >
               + Add Column
             </div>
@@ -523,16 +585,17 @@ export function MultipleContainers({
           )}
         </SortableContext>
       </div>
-      {createPortal(
-        <DragOverlay adjustScale={adjustScale} dropAnimation={dropAnimation}>
-          {activeId
-            ? containers.includes(activeId)
-              ? renderContainerDragOverlay(activeId)
-              : renderSortableItemDragOverlay(activeId)
-            : null}
-        </DragOverlay>,
-        document.body
-      )}
+      {typeof window === "object" &&
+        createPortal(
+          <DragOverlay adjustScale={adjustScale} dropAnimation={dropAnimation}>
+            {activeId
+              ? containers.includes(activeId)
+                ? renderContainerDragOverlay(activeId)
+                : renderSortableItemDragOverlay(activeId)
+              : null}
+          </DragOverlay>,
+          document?.body
+        )}
       {trashable && activeId && !containers.includes(activeId) ? (
         <Trash id={TRASH_ID} />
       ) : null}
@@ -540,7 +603,7 @@ export function MultipleContainers({
   );
 
   function renderSortableItemDragOverlay(id: UniqueIdentifier) {
-    const oi = Object.values(items)
+    const listWithItem = Object.values(items)
       .map((column) => {
         const teste = column.find((test) => test.id === id);
 
@@ -554,7 +617,7 @@ export function MultipleContainers({
 
     return (
       <Item
-        value={oi[0]?.name}
+        value={listWithItem[0]?.name}
         handle={handle}
         style={getItemStyles({
           containerId: findContainer(id) as UniqueIdentifier,
