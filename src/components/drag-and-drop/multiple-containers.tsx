@@ -1,17 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   CancelDrop,
   CollisionDetection,
@@ -63,9 +51,7 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
-type Items = Record<UniqueIdentifier, UniqueIdentifier[]>;
-
-type ItemsNew = Record<
+type Items = Record<
   UniqueIdentifier,
   Array<{ id: UniqueIdentifier; name: string; index: number }>
 >;
@@ -87,9 +73,8 @@ interface Props {
   }): React.CSSProperties;
   wrapperStyle?(args: { index: number }): React.CSSProperties;
   itemCount?: number;
-  items?: ItemResponse[];
+  items: ItemResponse[];
   handle?: boolean;
-  renderItem?: any;
   strategy?: SortingStrategy;
   modifiers?: Modifiers;
   minimal?: boolean;
@@ -97,11 +82,6 @@ interface Props {
   scrollable?: boolean;
   vertical?: boolean;
 }
-
-type ReduceResult = Record<
-  UniqueIdentifier,
-  Array<{ id: UniqueIdentifier; name: string; index: number }>
->;
 
 export const TRASH_ID = "void";
 const PLACEHOLDER_ID = "placeholder";
@@ -118,7 +98,6 @@ export default function MultipleContainers({
   minimal = false,
   items: initialItems,
   modifiers,
-  renderItem,
   strategy = verticalListSortingStrategy,
   trashable = false,
   vertical = false,
@@ -127,10 +106,10 @@ export default function MultipleContainers({
   const addTaskModalStore = useAddTaskModal();
   const addColumnModalStore = useAddColumnModal();
 
-  const [items, setItems] = useState<ItemsNew>(() => {
+  const [items, setItems] = useState<Items>(() => {
     if (initialItems) {
       const result = initialItems.reduce(
-        (acc: ReduceResult, item: ItemResponse) => {
+        (acc: Items, item: ItemResponse) => {
           acc[item.column] = acc[item.column] || [];
           acc[item.column].push({
             id: item.id,
@@ -229,7 +208,7 @@ export default function MultipleContainers({
     },
     [activeId, items]
   );
-  const [clonedItems, setClonedItems] = useState<ItemsNew | null>(null);
+  const [clonedItems, setClonedItems] = useState<Items | null>(null);
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
@@ -549,7 +528,6 @@ export default function MultipleContainers({
                       handle={handle}
                       style={getItemStyles}
                       wrapperStyle={wrapperStyle}
-                      renderItem={renderItem}
                       containerId={containerId}
                       getIndex={getIndex}
                       name={value.name}
@@ -633,7 +611,6 @@ export default function MultipleContainers({
         })}
         color={getColor(id)}
         wrapperStyle={wrapperStyle({ index: 0 })}
-        renderItem={renderItem}
         dragOverlay
       />
     );
@@ -665,7 +642,6 @@ export default function MultipleContainers({
             })}
             color={getColor(item.id)}
             wrapperStyle={wrapperStyle({ index })}
-            renderItem={renderItem}
           />
         ))}
       </Container>
