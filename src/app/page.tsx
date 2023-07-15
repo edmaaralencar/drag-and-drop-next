@@ -22,7 +22,7 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen">
-      <MultipleContainers items={items} scrollable />
+      <MultipleContainers items={items} scrollable handle />
     </main>
   );
 }
