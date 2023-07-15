@@ -3,8 +3,8 @@ import { UniqueIdentifier } from "@dnd-kit/core";
 
 import dynamic from "next/dynamic";
 
-const MultipleContainers = dynamic(
-  () => import("../components/drag-and-drop/multiple-containers"),
+const Board = dynamic(
+  () => import("../components/drag-and-drop/board"),
   {
     ssr: false,
   }
@@ -22,7 +22,7 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen">
-      <MultipleContainers items={items} scrollable handle trashable />
+      <Board items={items} scrollable handle trashable />
     </main>
   );
 }

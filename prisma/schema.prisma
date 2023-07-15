@@ -18,3 +18,11 @@ model Item {
 
   @@map("items")
 }
+
+model List {
+  id String @id @default(uuid())
+  name String
+  index Int
+
+  @@map("lists")
+}

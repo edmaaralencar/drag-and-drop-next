@@ -4,15 +4,13 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogTitle
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAddColumnModal } from "@/hooks/use-add-column-modal-hook";
+import { useAddColumnModal } from "@/hooks/use-add-column-modal";
 import { useState } from "react";
 
 export function AddColumnModal() {
@@ -20,7 +18,7 @@ export function AddColumnModal() {
   const [columnName, setColumnName] = useState("");
 
   function onOpenChange() {
-    if (addColumnModal.data.isOpen){
+    if (addColumnModal.data.isOpen) {
       addColumnModal.onClose();
     }
   }

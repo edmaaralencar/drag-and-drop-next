@@ -1,12 +1,12 @@
 "use client";
 import { UniqueIdentifier } from "@dnd-kit/core";
-import { Container, ContainerProps } from "./container";
 import {
   AnimateLayoutChanges,
   defaultAnimateLayoutChanges,
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { List, ListProps } from "../list";
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -17,19 +17,22 @@ export interface IItem {
   index: number;
 }
 
+export type DroppableContainerProps = {
+  disabled?: boolean;
+  id: UniqueIdentifier;
+  items: IItem[];
+  style?: React.CSSProperties;
+} & Omit<ListProps, "style">;
+
 export function DroppableContainer({
   children,
   disabled,
   id,
   items,
   style,
+  label,
   ...props
-}: ContainerProps & {
-  disabled?: boolean;
-  id: UniqueIdentifier;
-  items: IItem[];
-  style?: React.CSSProperties;
-}) {
+}: DroppableContainerProps) {
   const {
     active,
     attributes,
@@ -51,11 +54,10 @@ export function DroppableContainer({
   const isOverContainer = over
     ? (id === over.id && active?.data.current?.type !== "container") ||
       items.some((item) => item.id === over.id)
-    : // items.includes(over.id)
-      false;
+    : false;
 
   return (
-    <Container
+    <List
       ref={disabled ? undefined : setNodeRef}
       style={{
         ...style,
@@ -68,9 +70,10 @@ export function DroppableContainer({
         ...attributes,
         ...listeners,
       }}
+      label={label}
       {...props}
     >
       {children}
-    </Container>
+    </List>
   );
 }

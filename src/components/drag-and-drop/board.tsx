@@ -1,5 +1,8 @@
 "use client";
 
+import { ItemResponse } from "@/app/page";
+import { useAddColumnModal } from "@/hooks/use-add-column-modal";
+import { useAddTaskModal } from "@/hooks/use-add-task-modal";
 import {
   CancelDrop,
   CollisionDetection,
@@ -23,23 +26,21 @@ import {
 } from "@dnd-kit/core";
 import {
   SortableContext,
-  arrayMove,
-  verticalListSortingStrategy,
   SortingStrategy,
+  arrayMove,
   horizontalListSortingStrategy,
+  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal, unstable_batchedUpdates } from "react-dom";
-import { coordinateGetter as multipleContainersCoordinateGetter } from "./multipleContainersKeyboardCoordinates";
-import { createRange, getColor } from "./utils";
-import { DroppableContainer, IItem } from "./droppable-container";
-import { SortableItem } from "./sortable-item";
 import { Item } from "../item";
-import { Trash } from "./trash";
 import { Container } from "./container";
-import { useAddTaskModal } from "@/hooks/use-add-task-modal-hook";
-import { useAddColumnModal } from "@/hooks/use-add-column-modal-hook";
-import { ItemResponse } from "@/app/page";
+import { DroppableContainer } from "./droppable-container";
+import { coordinateGetter as multipleContainersCoordinateGetter } from "./multipleContainersKeyboardCoordinates";
+import { SortableItem } from "./sortable-item";
+import { Trash } from "./trash";
+import { getColor } from "./utils";
+import { List } from "../list";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -85,9 +86,8 @@ interface Props {
 
 export const TRASH_ID = "void";
 const PLACEHOLDER_ID = "placeholder";
-const empty: IItem[] = [];
 
-export default function MultipleContainers({
+export default function Board({
   adjustScale = false,
   cancelDrop,
   handle = false,
@@ -108,18 +108,15 @@ export default function MultipleContainers({
 
   const [items, setItems] = useState<Items>(() => {
     if (initialItems) {
-      const result = initialItems.reduce(
-        (acc: Items, item: ItemResponse) => {
-          acc[item.column] = acc[item.column] || [];
-          acc[item.column].push({
-            id: item.id,
-            name: item.name,
-            index: item.index,
-          });
-          return acc;
-        },
-        Object.create(null)
-      );
+      const result = initialItems.reduce((acc: Items, item: ItemResponse) => {
+        acc[item.column] = acc[item.column] || [];
+        acc[item.column].push({
+          id: item.id,
+          name: item.name,
+          index: item.index,
+        });
+        return acc;
+      }, Object.create(null));
       for (const property in result) {
         result[property].sort((a, b) => a.index - b.index);
       }
@@ -510,11 +507,10 @@ export default function MultipleContainers({
             <DroppableContainer
               key={containerId}
               id={containerId}
-              label={minimal ? undefined : `${containerId}`}
+              label={`${containerId}`}
               items={items[containerId]}
               scrollable={scrollable}
               style={containerStyle}
-              unstyled={minimal}
               onRemove={() => handleRemove(containerId)}
             >
               <SortableContext items={items[containerId]} strategy={strategy}>
@@ -586,10 +582,10 @@ export default function MultipleContainers({
   function renderSortableItemDragOverlay(id: UniqueIdentifier) {
     const listWithItem = Object.values(items)
       .map((column) => {
-        const teste = column.find((test) => test.id === id);
+        const correctItem = column.find((test) => test.id === id);
 
-        if (teste) {
-          return teste;
+        if (correctItem) {
+          return correctItem;
         } else {
           return null;
         }
@@ -618,13 +614,13 @@ export default function MultipleContainers({
 
   function renderContainerDragOverlay(containerId: UniqueIdentifier) {
     return (
-      <Container
+      <List
         label={`Column ${containerId}`}
         style={{
           height: "100%",
         }}
-        shadow
-        unstyled={false}
+        // shadow
+        // unstyled={false}
       >
         {items[containerId].map((item, index) => (
           <Item
@@ -644,7 +640,7 @@ export default function MultipleContainers({
             wrapperStyle={wrapperStyle({ index })}
           />
         ))}
-      </Container>
+      </List>
     );
   }
 
