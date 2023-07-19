@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AddColumnModal } from "@/components/modals/add-column-modal";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,11 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <AddTaskModal />
-        <AddColumnModal />
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className}`}>
+        <ThemeProvider attribute="class" defaultTheme="dark">
+          <AddTaskModal />
+          <AddColumnModal />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

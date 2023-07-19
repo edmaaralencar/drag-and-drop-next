@@ -37,13 +37,14 @@ const ListWithoutRef: React.ForwardRefRenderFunction<
         ...style,
       }}
       className={cn(
-        "flex flex-col overflow-hidden appearance-none outline-none min-w-[300px] m-[10px] rounded-md min-h-[300px] transition-colors border border-black/5 text-md bg-[#f6f6f6]",
+        "border border-border flex flex-col overflow-hidden appearance-none outline-none min-w-[300px] rounded-md min-h-[300px] transition-colors text-md",
         horizontal && "w-full",
-        hover && "bg-[rgb(235,235,235,1)]"
+        hover && "border-2"
+        // hover && "bg-[rgb(235,235,235,1)]"
         // shadow && styles.shadow
       )}
     >
-      <div className="flex items-center justify-between bg-white pr-2 px-5 py-[5px] rounded-t-[5px] border-b-[rgba(0,0,0,0.08)] border-b border-solid hover:border-b-black/20">
+      <div className="flex items-center justify-between border-b border-border pr-2 px-5 py-3 rounded-t-[5px] ">
         {label}
         <div className="flex gap-2">
           {onRemove && <Remove onClick={onRemove} />}

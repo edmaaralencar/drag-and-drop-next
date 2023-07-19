@@ -41,6 +41,7 @@ import { SortableItem } from "./sortable-item";
 import { Trash } from "./trash";
 import { getColor } from "./utils";
 import { List } from "../list";
+import { cn } from "@/lib/utils";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -488,12 +489,7 @@ export default function Board({
       modifiers={modifiers}
     >
       <div
-        style={{
-          display: "inline-grid",
-          boxSizing: "border-box",
-          padding: 20,
-          gridAutoFlow: vertical ? "row" : "column",
-        }}
+        className={cn("inline-grid m-5 box-border overflow-x-auto gap-2", vertical ? "grid-flow-row" : "grid-flow-col")}
       >
         <SortableContext
           items={[...containers, PLACEHOLDER_ID]}
@@ -534,7 +530,7 @@ export default function Board({
                   onClick={() =>
                     addTaskModalStore.onOpen(containerId, handleAddTask)
                   }
-                  className="py-[18px] px-5 flex items-center justify-center w-full cursor-pointer border border-dashed border-black/10 text-black/40 hover:border-b-black/30"
+                  className="py-[18px] px-5 flex items-center justify-center w-full cursor-pointer border border-dashed border-border"
                 >
                   + Add Task
                 </div>
@@ -546,19 +542,10 @@ export default function Board({
               onClick={() => {
                 addColumnModalStore.onOpen(handleAddColumn);
               }}
-              className="py-[18px] min-w-[300px] px-5 flex items-center justify-center cursor-pointer border border-dashed border-black/10 text-black/40 hover:border-b-black/30"
+              className="w-[300px] px-5 flex items-center justify-center m-2.5 cursor-pointer border border-dashed border-border"
             >
               + Add Column
             </div>
-            // <DroppableContainer
-            //   id={PLACEHOLDER_ID}
-            //   disabled={isSortingContainer}
-            //   items={empty}
-            //   onClick={handleAddColumn}
-            //   placeholder
-            // >
-            //   + Add column
-            // </DroppableContainer>
           )}
         </SortableContext>
       </div>
@@ -651,8 +638,6 @@ export default function Board({
   }
 
   function handleAddColumn(colunmName: string) {
-    const newContainerId = getNextContainerId();
-
     unstable_batchedUpdates(() => {
       setContainers((containers) => [...containers, colunmName]);
       setItems((items) => ({
@@ -660,12 +645,5 @@ export default function Board({
         [colunmName]: [],
       }));
     });
-  }
-
-  function getNextContainerId() {
-    const containerIds = Object.keys(items);
-    const lastContainerId = containerIds[containerIds.length - 1];
-
-    return String.fromCharCode(lastContainerId.charCodeAt(0) + 1);
   }
 }

@@ -2,8 +2,6 @@
 import React, { forwardRef, CSSProperties } from "react";
 import classNames from "classnames";
 
-import styles from "./action.module.scss";
-
 export interface ActionProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   active?: {
@@ -21,7 +19,7 @@ const ActionWithoutRef: React.ForwardRefRenderFunction<
     <button
       ref={ref}
       {...props}
-      className={classNames(styles.Action, className)}
+      className={classNames("p-2 fill-[#919eab] hover:bg-muted rounded-md", className)}
       tabIndex={0}
       style={
         {

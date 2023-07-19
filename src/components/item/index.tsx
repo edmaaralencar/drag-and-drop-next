@@ -99,6 +99,7 @@ export const Item = React.memo(
           <div
             className={classNames(
               styles.Item,
+              "border border-border justify-between",
               dragging && styles.dragging,
               handle && styles.withHandle,
               dragOverlay && styles.dragOverlay,
@@ -112,7 +113,7 @@ export const Item = React.memo(
             tabIndex={!handle ? 0 : undefined}
           >
             {value}
-            <span className={styles.Actions}>
+            <span>
               {onRemove ? (
                 <Remove className={styles.Remove} onClick={onRemove} />
               ) : null}
