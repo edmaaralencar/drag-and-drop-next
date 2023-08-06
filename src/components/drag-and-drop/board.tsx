@@ -1,6 +1,6 @@
 "use client";
 
-import { ItemResponse } from "@/app/page";
+import { ItemResponse } from "@/app/(app)/(routes)/projects/[projectId]/(routes)/kanban/page";
 import { useAddColumnModal } from "@/hooks/use-add-column-modal";
 import { useAddTaskModal } from "@/hooks/use-add-task-modal";
 import {
@@ -489,7 +489,10 @@ export default function Board({
       modifiers={modifiers}
     >
       <div
-        className={cn("inline-grid m-5 box-border overflow-x-auto gap-2", vertical ? "grid-flow-row" : "grid-flow-col")}
+        className={cn(
+          "flex box-border overflow-x-auto gap-8",
+          vertical ? "grid-flow-row" : "grid-flow-col"
+        )}
       >
         <SortableContext
           items={[...containers, PLACEHOLDER_ID]}
@@ -542,7 +545,7 @@ export default function Board({
               onClick={() => {
                 addColumnModalStore.onOpen(handleAddColumn);
               }}
-              className="w-[300px] px-5 flex items-center justify-center m-2.5 cursor-pointer border border-dashed border-border"
+              className="min-w-[300px] h-[600px] px-5 flex items-center justify-center cursor-pointer border border-dashed border-border"
             >
               + Add Column
             </div>

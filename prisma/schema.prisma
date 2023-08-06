@@ -10,6 +10,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Project {
+  id     String @id @default(uuid())
+  name   String
+  userId String
+
+  @@map("projects")
+}
+
 model Item {
   id     String @id @default(uuid())
   name   String
@@ -20,8 +28,8 @@ model Item {
 }
 
 model List {
-  id String @id @default(uuid())
-  name String
+  id    String @id @default(uuid())
+  name  String
   index Int
 
   @@map("lists")

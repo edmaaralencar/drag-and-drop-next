@@ -4,6 +4,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AddColumnModal } from "@/components/modals/add-column-modal";
 import { ThemeProvider } from "@/components/theme-provider";
+import Link from "next/link";
+import { Home } from "lucide-react";
+import { CreateProjectModal } from "@/components/modals/create-project-modal";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,14 +22,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className}`}>
-        <ThemeProvider attribute="class" defaultTheme="dark">
-          <AddTaskModal />
-          <AddColumnModal />
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${inter.className}`}>
+          <ThemeProvider attribute="class" defaultTheme="dark">
+            <AddTaskModal />
+            <AddColumnModal />
+            <CreateProjectModal />
+            {children}
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

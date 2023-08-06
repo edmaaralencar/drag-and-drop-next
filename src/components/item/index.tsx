@@ -6,6 +6,8 @@ import React, { useEffect } from "react";
 import { Handle } from "./handle";
 import styles from "./item.module.scss";
 import { Remove } from "./remove";
+import Image from "next/image";
+import { Clock } from "lucide-react";
 
 export interface Props {
   dragOverlay?: boolean;
@@ -99,7 +101,7 @@ export const Item = React.memo(
           <div
             className={classNames(
               styles.Item,
-              "border border-border justify-between",
+              "border border-border justify-between flex flex-col w-full bg-background",
               dragging && styles.dragging,
               handle && styles.withHandle,
               dragOverlay && styles.dragOverlay,
@@ -112,13 +114,48 @@ export const Item = React.memo(
             {...props}
             tabIndex={!handle ? 0 : undefined}
           >
-            {value}
-            <span>
-              {onRemove ? (
-                <Remove className={styles.Remove} onClick={onRemove} />
-              ) : null}
-              {handle ? <Handle {...handleProps} {...listeners} /> : null}
-            </span>
+            <div className="relative w-full h-[240px]">
+              <Image src="/image.jpeg" alt="teste" fill />
+            </div>
+            <div className="p-4 flex flex-col gap-6">
+              <div className="flex flex-col gap-2">
+                <span className="text-lg text-foreground">{value}</span>
+                <span className="text-sm text-muted-foreground whitespace-normal">
+                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Id
+                  iusto?
+                </span>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-muted-foreground">Progresso</span>
+
+                <div className="rounded bg-muted h-2 w-full relative">
+                  <div className="absolute w-1/2 bg-primary h-2"></div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2 items-center">
+                  <Clock size={16} className="text-muted-foreground" />
+                  <span className="text-muted-foreground">
+                    Prazo acaba em 3 dias.
+                  </span>
+                </div>
+
+                <div className="flex gap-1">
+                  <div className="relative w-6 h-6 rounded-full overflow-hidden">
+                    <Image src="/image.jpeg" alt="teste" fill />
+                  </div>
+                  <div className="relative w-6 h-6 rounded-full overflow-hidden">
+                    <Image src="/image.jpeg" alt="teste" fill />
+                  </div>
+                </div>
+              </div>
+              {/* <span>
+                {onRemove ? (
+                  <Remove className={styles.Remove} onClick={onRemove} />
+                ) : null}
+                {handle ? <Handle {...handleProps} {...listeners} /> : null}
+              </span> */}
+            </div>
           </div>
         </li>
       );
