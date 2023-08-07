@@ -2,7 +2,16 @@
 
 import { useSidebar } from "@/hooks/use-sidebar.modal";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp, Home } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronDown,
+  ChevronUp,
+  CircleDollarSign,
+  Home,
+  KanbanSquare,
+  LayoutDashboard,
+  MessageSquare,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useState } from "react";
@@ -17,36 +26,43 @@ export function Sidebar() {
     {
       href: `/${params.projectId}`,
       label: "Geral",
+      icon: Home,
       active: pathname === `/${params.projectId}`,
     },
     {
       href: `/projects`,
       label: "Projetos",
+      icon: LayoutDashboard,
       active: pathname === `/projects`,
     },
     {
       href: `/${params.projectId}/kanban`,
       label: "Kanban",
+      icon: KanbanSquare,
       active: pathname === `/${params.projectId}/kanban`,
     },
     {
       href: `/${params.projectId}/categories`,
       label: "Calendário",
+      icon: CalendarDays,
       active: pathname === `/${params.projectId}/categories`,
     },
     {
       href: `/${params.projectId}/sizes`,
       label: "Pagamentos",
+      icon: CircleDollarSign,
       active: pathname === `/${params.projectId}/sizes`,
     },
     {
       href: `/${params.projectId}/colors`,
       label: "Membros",
+      icon: Home,
       active: pathname === `/${params.projectId}/colors`,
     },
     {
       href: `/${params.projectId}/colors`,
       label: "Chat",
+      icon: MessageSquare,
       active: pathname === `/${params.projectId}/colors`,
     },
   ];
@@ -70,7 +86,7 @@ export function Sidebar() {
               route.active && "bg-primary text-background"
             )}
           >
-            <Home
+            <route.icon
               className={cn(
                 "w-4 h-4 text-foreground group-hover:text-background",
                 route.active && "bg-primary text-background"
