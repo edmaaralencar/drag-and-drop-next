@@ -22,7 +22,7 @@ export default async function RootLayout({
   const projectInvitations = await prisma.projectMemberInvitation.findMany({
     where: {
       userEmail: String(session.user?.email),
-      read: true,
+      read: false,
     },
     include: {
       project: {

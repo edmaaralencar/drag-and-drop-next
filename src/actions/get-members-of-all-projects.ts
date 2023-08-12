@@ -43,7 +43,10 @@ export async function getMembersOfAllProjects() {
 
     return members.filter(
       (value, index, self) =>
-        index === self.findIndex((t) => t.user.name === value.user.name)
+        index ===
+        self.findIndex(
+          (t) => t.user.name === value.user.name || t.user.id !== user.id
+        )
     );
   } catch (error) {
     return [];

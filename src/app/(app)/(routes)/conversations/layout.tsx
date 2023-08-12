@@ -3,7 +3,7 @@ import { ConversationsHeader } from "./components/conversations-header";
 import getCurrentUser from "@/actions/get-current-user";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { CreateConversationModal } from "@/components/modals/creat-conversation-modal";
+import { CreateConversationModal } from "@/components/modals/create-conversation-modal";
 import { getMembersOfAllProjects } from "@/actions/get-members-of-all-projects";
 
 export default async function Layout({ children }: { children: ReactNode }) {

@@ -20,14 +20,9 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "../ui/use-toast";
 import { useCreateConversationModal } from "@/hooks/use-conversation-modal";
 import { Select } from "../select";
+import axios from "axios";
 
 const formSchema = z.object({
-  name: z.string().min(1, {
-    message: "Nome do projeto obrigatório.",
-  }),
-  client: z.string().min(1, {
-    message: "Cliente obrigatório.",
-  }),
   user: z.object(
     {
       value: z.string(),
@@ -50,15 +45,24 @@ export function CreateConversationModal({ members }: CreateConversationModal) {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      client: "",
-    },
+    defaultValues: {},
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setLoading(true);
+
+      const response = await axios.post("/api/conversations", {
+        userId: values.user.value,
+      });
+
+      console.log(response);
+
+      if (response.data.id) {
+        router.push(`/conversations/${response.data.id}`);
+      } else {
+        console.log("criado");
+      }
       // await axios.post("/api/projects", {
       //   name: values.name,
       //   deadlineDate: values.deadlineDate,
@@ -67,7 +71,7 @@ export function CreateConversationModal({ members }: CreateConversationModal) {
       //   tags: values.tags,
       // });
 
-      router.refresh();
+      // router.refresh();
       // createConversationModalStore.onClose();
       // toast({
       //   title: "Projeto criado com sucesso.",

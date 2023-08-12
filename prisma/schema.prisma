@@ -23,6 +23,8 @@ model User {
   accounts        Account[]
   projects        Project[]
   project_members ProjectMember[]
+  messages Message[]
+  conversations ConversationUser[]
 
   @@map("users")
 }
@@ -128,6 +130,42 @@ model ProjectMemberInvitation {
   projectMember ProjectMember[]
 
   @@map("project_members_invitations")
+}
+
+model Conversation {
+  id String @id @default(uuid())
+  lastMessageAt DateTime @default(now())
+  name String?
+  isGroup Boolean
+
+  messages Message[]
+  users ConversationUser[]
+
+  @@map("conversations")
+}
+
+model ConversationUser {
+  id String @id @default(uuid())
+
+  conversationId String
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("conversation_users")
+}
+
+model Message {
+  id String @id @default(uuid())
+  body String
+
+  conversationId String
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId String
+  sender User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
 }
 
 // model MemberNotification {
