@@ -1,6 +1,5 @@
 "use client";
 
-import { ItemResponse } from "@/app/(app)/(routes)/projects/[projectId]/(routes)/kanban/page";
 import { useAddColumnModal } from "@/hooks/use-add-column-modal";
 import { useAddTaskModal } from "@/hooks/use-add-task-modal";
 import {
@@ -42,6 +41,7 @@ import { Trash } from "./trash";
 import { getColor } from "./utils";
 import { List } from "../list";
 import { cn } from "@/lib/utils";
+import { ItemResponse } from "@/app/(app)/(routes)/projects/[projectId]/kanban/page";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -119,7 +119,7 @@ export default function Board({
         return acc;
       }, Object.create(null));
       for (const property in result) {
-        result[property].sort((a, b) => a.index - b.index);
+        result[property].sort((a: any, b: any) => a.index - b.index);
       }
       return result;
     } else {
@@ -535,7 +535,7 @@ export default function Board({
                   }
                   className="py-[18px] px-5 flex items-center justify-center w-full cursor-pointer border border-dashed border-border"
                 >
-                  + Add Task
+                  Adicionar Card
                 </div>
               </SortableContext>
             </DroppableContainer>
@@ -547,7 +547,7 @@ export default function Board({
               }}
               className="min-w-[300px] h-[600px] px-5 flex items-center justify-center cursor-pointer border border-dashed border-border"
             >
-              + Add Column
+              Adicionar Lista
             </div>
           )}
         </SortableContext>

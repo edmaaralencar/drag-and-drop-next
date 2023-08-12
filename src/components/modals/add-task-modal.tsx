@@ -14,17 +14,17 @@ import { useAddTaskModal } from "@/hooks/use-add-task-modal";
 import { useState } from "react";
 
 export function AddTaskModal() {
-  const addTaskModal = useAddTaskModal();
+  const addTaskModalStore = useAddTaskModal();
   const [taskName, setTaskName] = useState("");
 
   function onOpenChange() {
-    if (addTaskModal.data.isOpen) {
-      addTaskModal.onClose();
+    if (addTaskModalStore.data.isOpen) {
+      addTaskModalStore.onClose();
     }
   }
 
   return (
-    <Dialog open={addTaskModal.data.isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={addTaskModalStore.data.isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Crie uma task</DialogTitle>
@@ -43,8 +43,8 @@ export function AddTaskModal() {
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            addTaskModal?.data?.handleAddTask(addTaskModal.data.containerId, taskName);
-            addTaskModal.onClose();
+            addTaskModalStore?.data?.handleAddTask(addTaskModalStore.data.containerId, taskName);
+            addTaskModalStore.onClose();
           }}
         >
           <DialogFooter>

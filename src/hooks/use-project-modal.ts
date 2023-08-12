@@ -6,7 +6,7 @@ interface UseProjectModalStore {
   onClose: () => void;
 }
 
-export const useProjectModal = create<UseProjectModalStore>((set) => ({
+export const useCreateProjectModal = create<UseProjectModalStore>((set) => ({
   isOpen: false,
   onOpen: () => set({ isOpen: true }),
   onClose: () => set({ isOpen: false }),

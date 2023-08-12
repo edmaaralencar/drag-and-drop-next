@@ -3,13 +3,30 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { formatDate } from "@/lib/date";
 
-export function ProjectCard() {
+type ProjectCardProps = {
+  id: string;
+  name: string;
+  client: string;
+  deadlineDate: Date;
+  priority: string;
+  tags: { name: string }[];
+};
+
+export function ProjectCard({
+  id,
+  name,
+  client,
+  deadlineDate,
+  priority,
+  tags,
+}: ProjectCardProps) {
   return (
     <div className="border border-border p-4 flex flex-col gap-4 rounded-md">
       <div className="flex justify-between items-center">
-        <h2>EVIS</h2>
-        <Badge>Em progresso</Badge>
+        <h2>{name}</h2>
+        <Badge>{priority}</Badge>
       </div>
       <div className="flex justify-between items-center">
         <div className="flex gap-2">
@@ -19,7 +36,7 @@ export function ProjectCard() {
           </Avatar>
           <div className="flex flex-col">
             <small className="text-xs text-muted-foreground">Cliente</small>
-            <span className="text-sm">Leonardo</span>
+            <span className="text-sm">{client}</span>
           </div>
         </div>
 
@@ -46,21 +63,20 @@ export function ProjectCard() {
       </div>
 
       <div className="flex gap-2 flex-wrap">
-        <Badge>Frontend</Badge>
-        <Badge>Mobile</Badge>
-        <Badge>UI Design</Badge>
-        <Badge>Backend</Badge>
+        {tags.map((tag) => (
+          <Badge key={tag.name}>{tag.name}</Badge>
+        ))}
       </div>
 
       <div className="flex gap-1 items-center">
         <Timer className="w-4 h-4 text-muted-foreground" />
         <span className="text-sm text-muted-foreground">
-          Prazo acaba 13 de janeiro
+          Prazo acaba {formatDate(deadlineDate, "dd 'de' MMMM")}
         </span>
       </div>
 
       <Button size="sm" className="mt-4" asChild>
-        <Link href={`/projects/123`}>Ver mais</Link>
+        <Link href={`/projects/${id}`}>Ver mais</Link>
       </Button>
     </div>
   );

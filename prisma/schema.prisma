@@ -10,13 +10,138 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id             String    @id @default(uuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  hashedPassword String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  accounts        Account[]
+  projects        Project[]
+  project_members ProjectMember[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
 model Project {
-  id     String @id @default(uuid())
-  name   String
-  userId String
+  id           String   @id @default(uuid())
+  name         String
+  client       String
+  deadlineDate DateTime
+  userId       String
+  priority     String
+
+  user                    User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments                Payment[]
+  tags                    ProjectTag[]
+  tasks                   ProjectTask[]
+  members                 ProjectMember[]
+  ProjectMemberInvitation ProjectMemberInvitation[]
 
   @@map("projects")
 }
+
+model ProjectTag {
+  id        String @id @default(uuid())
+  name      String
+  projectId String
+
+  Project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_tags")
+}
+
+model ProjectTask {
+  id          String   @id @default(uuid())
+  projectId   String
+  name        String
+  description String
+  tag         String
+  duedate     DateTime
+  index       Int
+  column      String
+
+  Project  Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  subTasks ProjectSubTask[]
+
+  @@map("project_tasks")
+}
+
+model ProjectSubTask {
+  id     String  @id @default(uuid())
+  name   String
+  done   Boolean
+  taskId String
+
+  task ProjectTask @relation(fields: [taskId], references: [id])
+
+  @@map("project_subtasks")
+}
+
+model ProjectMember {
+  id           String  @id @default(uuid())
+  projectId    String
+  invitationId String?
+
+  invitation ProjectMemberInvitation? @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  user       User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project    Project                  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId     String
+
+  @@map("project_members")
+}
+
+model ProjectMemberInvitation {
+  id         String  @id @default(uuid())
+  name       String
+  occupation String
+  userEmail  String
+  projectId  String
+  status     String
+  read       Boolean
+
+  project       Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectMember ProjectMember[]
+
+  @@map("project_members_invitations")
+}
+
+// model MemberNotification {
+//   id        String @id @default(uuid())
+//   message   String
+//   to        String
+//   projectId String
+
+//   user    User    @relation(fields: [to], references: [id])
+//   project Project @relation(fields: [projectId], references: [id])
+// }
+
+// requested
+// accepted
 
 model Item {
   id     String @id @default(uuid())
@@ -33,4 +158,16 @@ model List {
   index Int
 
   @@map("lists")
+}
+
+model Payment {
+  id             String   @id @default(uuid())
+  value          Int
+  date           DateTime
+  payment_method String
+  projectId      String
+
+  project Project @relation(fields: [projectId], references: [id])
+
+  @@map("payments")
 }

@@ -3,7 +3,7 @@ import { DatePickerDemo } from "@/components/ui/date-picker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check } from "lucide-react";
 
-export default function Page() {
+export default function Page({ searchParams }: { searchParams: any }) {
   return (
     <main className="flex flex-col gap-4">
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">

@@ -1,9 +1,11 @@
-import { Header } from "@/components/header";
+import { NotificationDropdown } from "@/components/notification-dropdown";
 import { OpenSidebarButton } from "@/components/open-sidebar-button";
 import { Sidebar } from "@/components/sidebar";
+import { SignOutButton } from "@/components/sign-out-button";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { UserButton, auth } from "@clerk/nextjs";
 import { Bell, Menu } from "lucide-react";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 export default async function RootLayout({
@@ -11,36 +13,43 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { userId } = auth();
+  const session = await getServerSession(authOptions);
 
-  if (!userId) {
+  if (!session) {
     redirect("/sign-in");
   }
 
-  // const project = await prisma.project.findFirst({
-  //   where: {
-  //     userId,
-  //   },
-  // });
-
-  // if (!project) {
-  //   redirect("/");
-  // }
+  const projectInvitations = await prisma.projectMemberInvitation.findMany({
+    where: {
+      userEmail: String(session.user?.email),
+      read: true,
+    },
+    include: {
+      project: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
 
   return (
-    <div className="relative">
+    <div className="relative h-full">
       <Sidebar />
       {/* <Header /> */}
-      <div className="md:ml-[260px] flex flex-col">
+      <div className="md:ml-[260px] flex flex-col h-full">
         <header className="p-6 w-full border-b border-border flex justify-between items-center">
           <h1 className="hidden md:text-2xl">Início</h1>
+          <SignOutButton />
           <OpenSidebarButton />
           <div className="flex items-center gap-4">
-            <Bell className="w-6 h-6" />
-            <UserButton afterSignOutUrl="/" />
+            <NotificationDropdown
+              notifications={projectInvitations}
+              currentUser={String(session.user?.email)}
+            />
           </div>
         </header>
-        <main className="p-6">{children}</main>
+        <main className="p-6 h-full">{children}</main>
       </div>
     </div>
   );

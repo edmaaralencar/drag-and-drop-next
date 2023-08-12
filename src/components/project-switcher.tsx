@@ -19,7 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useProjectModal } from "@/hooks/use-project-modal";
+import { useCreateProjectModal } from "@/hooks/use-project-modal";
 import { useParams, useRouter } from "next/navigation";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
@@ -34,7 +34,7 @@ export function ProjectSwitcher({
   className,
   items = [],
 }: ProjectSwitcherProps) {
-  const projectModal = useProjectModal();
+  const projectModal = useCreateProjectModal();
   const params = useParams();
   const router = useRouter();
 

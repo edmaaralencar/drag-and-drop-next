@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { PaymentsHeader } from "@/components/payments-header";
 import {
   Table,
   TableBody,
@@ -7,7 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus } from "lucide-react";
+import { formatDate } from "@/lib/date";
+import prisma from "@/lib/prisma";
 
 const invoices = [
   {
@@ -54,35 +55,44 @@ const invoices = [
   },
 ];
 
-export default function Page() {
-  return (
-    <main className="flex flex-col gap-4">
-      <header className="flex justify-between items-center py-2 border-b border-border">
-        <h2 className="text-lg">Lista de pagamentos</h2>
+export default async function Page({
+  params,
+}: {
+  params: { projectId: string };
+}) {
+  const payments = await prisma.payment.findMany({
+    where: {
+      projectId: params.projectId,
+    },
+  });
 
-        <Button className="gap-1">
-          Adicionar
-          <Plus className="w-4 h-4" />
-        </Button>
-      </header>
+  const formattedPayments = payments.map((item) => ({
+    ...item,
+    value: new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(item.value),
+  }));
+
+  return (
+    <main className="flex flex-col gap-6">
+      <PaymentsHeader />
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Invoice</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Method</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
+            <TableHead className="w-[360px]">ID</TableHead>
+            <TableHead>Data</TableHead>
+            <TableHead>Método</TableHead>
+            <TableHead className="text-right">Valor</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoices.map((invoice) => (
-            <TableRow key={invoice.invoice}>
-              <TableCell className="font-medium">{invoice.invoice}</TableCell>
-              <TableCell>{invoice.paymentStatus}</TableCell>
-              <TableCell>{invoice.paymentMethod}</TableCell>
-              <TableCell className="text-right">
-                {invoice.totalAmount}
-              </TableCell>
+          {formattedPayments.map((invoice) => (
+            <TableRow key={invoice.id}>
+              <TableCell className="font-medium">{invoice.id}</TableCell>
+              <TableCell>{formatDate(invoice.date, "dd/MM/yyyy")}</TableCell>
+              <TableCell>{invoice.payment_method}</TableCell>
+              <TableCell className="text-right">{invoice.value}</TableCell>
             </TableRow>
           ))}
         </TableBody>

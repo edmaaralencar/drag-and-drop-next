@@ -11,9 +11,11 @@ import {
   SelectValue,
 } from "./ui/select";
 import { useRouter } from "next/navigation";
+import { useCreateProjectModal } from "@/hooks/use-project-modal";
 
 export function ProjectsHeader() {
   const router = useRouter();
+  const createProjectModalStore = useCreateProjectModal();
 
   function handleFilterByStatus(value: string) {
     router.push(`/projects?status=${value}`);
@@ -35,7 +37,7 @@ export function ProjectsHeader() {
         </SelectContent>
       </Select>
 
-      <Button className="gap-1">
+      <Button onClick={createProjectModalStore.onOpen} className="gap-1">
         Criar
         <Plus className="w-4 h-4" />
       </Button>

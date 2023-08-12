@@ -7,7 +7,10 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import { CreateProjectModal } from "@/components/modals/create-project-modal";
-import { ClerkProvider } from "@clerk/nextjs";
+import { AddPaymentModal } from "@/components/modals/add-payment-modal";
+import { EditProjectModal } from "@/components/modals/edit-project-modal";
+import { AddMemberModal } from "@/components/modals/add-member-modal";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,17 +25,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={`${inter.className}`}>
-          <ThemeProvider attribute="class" defaultTheme="dark">
-            <AddTaskModal />
-            <AddColumnModal />
-            <CreateProjectModal />
-            {children}
-          </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className}`}>
+        <ThemeProvider attribute="class" defaultTheme="dark">
+          <AddTaskModal />
+          <AddColumnModal />
+          <CreateProjectModal />
+          <AddPaymentModal />
+          <AddMemberModal />
+          <Toaster />
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

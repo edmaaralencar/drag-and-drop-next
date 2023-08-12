@@ -60,10 +60,10 @@ export function Sidebar() {
       active: pathname === `/${params.projectId}/colors`,
     },
     {
-      href: `/${params.projectId}/colors`,
+      href: `/conversations`,
       label: "Chat",
       icon: MessageSquare,
-      active: pathname === `/${params.projectId}/colors`,
+      active: pathname === `/conversations`,
     },
   ];
 

@@ -2,18 +2,11 @@ import { redirect } from "next/navigation";
 import { ProjectSwitcher } from "./project-switcher";
 import { Navbar } from "./navbar";
 import prisma from "@/lib/prisma";
-import { UserButton, auth } from "@clerk/nextjs";
 
 export async function Header() {
-  const { userId } = auth();
-
-  if (!userId) {
-    redirect("/sign-in");
-  }
-
   const projects = await prisma.project.findMany({
     where: {
-      userId,
+      userId: "",
     },
   });
 
@@ -22,7 +15,7 @@ export async function Header() {
       <div className="w-full flex items-center justify-between max-w-[1340px] px-4">
         <ProjectSwitcher items={projects} />
         <Navbar />
-        <UserButton afterSignOutUrl="/" />
+        {/* <UserButton afterSignOutUrl="/" /> */}
       </div>
       {/* <div className="ml-auto flex items-center space-x-4"> */}
       {/* <ThemeToggle /> */}
